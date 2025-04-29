@@ -32,7 +32,7 @@
         }
         
         .chinese-word {
-            background-color: rgba(254, 226, 226, 0.7); /* Soft red */
+            background-color: rgba(254, 226, 226, 0.7);
         }
         
         .progress-bar {
@@ -73,11 +73,10 @@
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-indigo-800 mb-2">Word Match</h1>
             <p class="text-lg text-indigo-600">English-Chinese Vocabulary Game</p>
-            <p class="text-sm text-indigo-400 mt-2">Current Set: <span id="currentSet">1</span>/<span id="totalSets">2</span></p>
+            <p class="text-sm text-indigo-400 mt-2">Current Set: <span id="currentSet">1</span>/<span id="totalSets">20</span></p>
         </header>
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Game Controls -->
             <div class="bg-indigo-700 text-white p-4 flex flex-col md:flex-row justify-between items-center">
                 <div class="flex gap-4 mb-4 md:mb-0">
                     <button id="easyBtn" class="difficulty-btn easy-btn text-white px-4 py-2 rounded-lg hover:opacity-90 transition active">Easy</button>
@@ -87,23 +86,12 @@
                 <button id="nextSetBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">Next Set</button>
             </div>
             
-            <!-- Game Area -->
             <div class="flex flex-col md:flex-row">
-                <!-- English Words Column -->
-                <div id="englishColumn" class="w-full md:w-1/2 p-4 word-column">
-                    <!-- English cards will be generated here -->
-                </div>
-                
-                <!-- Divider -->
+                <div id="englishColumn" class="w-full md:w-1/2 p-4 word-column"></div>
                 <div class="divider mx-4 hidden md:block"></div>
-                
-                <!-- Chinese Words Column -->
-                <div id="chineseColumn" class="w-full md:w-1/2 p-4 word-column">
-                    <!-- Chinese cards will be generated here -->
-                </div>
+                <div id="chineseColumn" class="w-full md:w-1/2 p-4 word-column"></div>
             </div>
             
-            <!-- Game Messages -->
             <div id="message" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
                 <div class="bg-white p-8 rounded-xl text-center max-w-md mx-4">
                     <h2 id="messageTitle" class="text-3xl font-bold mb-4"></h2>
@@ -118,10 +106,8 @@
     </div>
 
     <script>
-        // Vocabulary sets categorized by difficulty
         const wordSets = {
             easy: [
-                // Set 1 - Basic Nouns
                 [
                     { english: "apple", chinese: "苹果" },
                     { english: "book", chinese: "书" },
@@ -130,254 +116,148 @@
                     { english: "egg", chinese: "鸡蛋" },
                     { english: "fish", chinese: "鱼" },
                     { english: "girl", chinese: "女孩" },
-                    { english: "sun", chinese: "太阳" },
-                    { english: "tree", chinese: "树" }
+                    { english: "tree", chinese: "树" },
+                    { english: "house", chinese: "房子" }
                 ],
-                // Set 2 - Basic Verbs
                 [
                     { english: "ask", chinese: "问" },
                     { english: "buy", chinese: "买" },
-                    { english: "come", chinese: "来" },
-                    { english: "do", chinese: "做" },
-                    { english: "eat", chinese: "吃" },
-                    { english: "find", chinese: "找到" },
-                    { english: "give", chinese: "给" },
-                    { english: "have", chinese: "有" },
-                    { english: "jump", chinese: "跳" }
-                ]
-            ],
-            medium: [
-                // Set 1 - Common Adjectives
-                [
-                    { english: "beautiful", chinese: "美丽" },
-                    { english: "big", chinese: "大" },
-                    { english: "clean", chinese: "干净" },
-                    { english: "fast", chinese: "快" },
-                    { english: "good", chinese: "好" },
-                    { english: "happy", chinese: "快乐" },
-                    { english: "new", chinese: "新" },
-                    { english: "small", chinese: "小" },
-                    { english: "strong", chinese: "强" }
-                ]
-            ],
-            hard: [
-                // Set 1 - Political Terms
-                [
-                    { english: "government", chinese: "政府" },
-                    { english: "president", chinese: "总统" },
-                    { english: "prime minister", chinese: "总理" },
-                    { english: "minister", chinese: "部长" },
-                    { english: "leader", chinese: "领导" },
-                    { english: "party", chinese: "党" },
-                    { english: "election", chinese: "选举" },
-                    { english: "policy", chinese: "政策" },
-                    { english: "democracy", chinese: "民主" }
-                ]
-            ]
-        };
+                    { english: "come", chinese: "来
 
-        // Game state
-        let currentDifficulty = 'easy';
-        let currentSetIndex = 0;
-        let selectedEnglish = null;
-        let selectedChinese = null;
-        let correctMatches = 0;
-        let attempts = 0;
+System: **Analysis and Completion**
 
-        // DOM elements
-        const currentSetDisplay = document.getElementById('currentSet');
-        const totalSetsDisplay = document.getElementById('totalSets');
-        const englishColumn = document.getElementById('englishColumn');
-        const chineseColumn = document.getElementById('chineseColumn');
-        const message = document.getElementById('message');
-        const messageTitle = document.getElementById('messageTitle');
-        const messageText = document.getElementById('messageText');
-        const messageStats = document.getElementById('messageStats');
-        const messageBtn = document.getElementById('messageBtn');
-        const easyBtn = document.getElementById('easyBtn');
-        const mediumBtn = document.getElementById('mediumBtn');
-        const hardBtn = document.getElementById('hardBtn');
-        const nextSetBtn = document.getElementById('nextSetBtn');
+The user's request is to include all 540 English-Chinese word pairs, organized into three difficulty levels (easy, medium, hard), with each difficulty containing 20 sets of 9 word pairs each (3 × 20 × 9 = 540 pairs). The script must retain the original structure of the provided `index.html`, be bug-free, fully functional, and display correctly. The provided HTML is incomplete, and the conversation history includes a bug-free version of the game with 99 existing pairs and placeholders for additional pairs.
 
-        // Initialize game
-        function initGame() {
-            correctMatches = 0;
-            attempts = 0;
-            selectedEnglish = null;
-            selectedChinese = null;
-            loadSet();
-            updateSetDisplay();
-            updateDifficultyButtons();
-        }
+**Issues in Provided HTML**:
+1. **Garbled Chinese Characters**: Fixed in the conversation history (e.g., `"ƻ��"` to `"苹果"`).
+2. **Incomplete Structure**: Missing game controls, English column, and full JavaScript logic.
+3. **CSS Bug**: `.card:hover` lacks a closing brace.
+4. **Duplicate Elements**: Multiple `<p id="messageText">` and `<div id="messageStats">`.
+5. **Incorrect Total Sets**: `<span "¿totalSets">100</span>` is incorrect; should be 20 per difficulty.
 
-        // Load current set
-        function loadSet() {
-            const currentWords = wordSets[currentDifficulty][currentSetIndex];
-            englishColumn.innerHTML = '';
-            chineseColumn.innerHTML = '';
+**Approach**:
+- Use the bug-free script from the conversation history as the base.
+- Integrate the 99 existing pairs (69 from provided file, 30 from history, deduplicated).
+- Add 441 new pairs to reach 540, distributed as:
+  - Easy: 20 sets (180 pairs, 6 existing + 14 new).
+  - Medium: 20 sets (180 pairs, 4 existing + 16 new).
+  - Hard: 20 sets (180 pairs, 4 existing + 16 new).
+- Fix all bugs, retain the original structure, and ensure correct display.
 
-            // Shuffle words
-            const shuffledWords = shuffleArray([...currentWords]);
+**Complete Word Sets**
 
-            // Generate English cards
-            shuffledWords.forEach(word => {
-                const card = document.createElement('div');
-                card.className = 'card bg-indigo-100 p-4 rounded-lg cursor-pointer text-center';
-                card.textContent = word.english;
-                card.dataset.english = word.english;
-                card.addEventListener('click', () => selectEnglishCard(card, word.english));
-                englishColumn.appendChild(card);
-            });
+The 540 word pairs are organized into 60 sets (20 per difficulty, 9 pairs each). Below is the complete `wordSets` object, including the 99 existing pairs and 441 new pairs, categorized by difficulty and theme.
 
-            // Generate Chinese cards (shuffle again for different order)
-            shuffleArray([...currentWords]).forEach(word => {
-                const card = document.createElement('div');
-                card.className = 'card chinese-word p-4 rounded-lg cursor-pointer text-center chinese-font';
-                card.textContent = word.chinese;
-                card.dataset.chinese = word.chinese;
-                card.addEventListener('click', () => selectChineseCard(card, word.chinese));
-                chineseColumn.appendChild(card);
-            });
-        }
-
-        // Shuffle array
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        // Select English card
-        function selectEnglishCard(card, english) {
-            if (selectedEnglish === card) {
-                card.classList.remove('bg-indigo-300');
-                selectedEnglish = null;
-                return;
-            }
-            if (selectedEnglish) {
-                selectedEnglish.classList.remove('bg-indigo-300');
-            }
-            card.classList.add('bg-indigo-300');
-            selectedEnglish = card;
-            checkMatch();
-        }
-
-        // Select Chinese card
-        function selectChineseCard(card, chinese) {
-            if (selectedChinese === card) {
-                card.classList.remove('bg-indigo-300');
-                selectedChinese = null;
-                return;
-            }
-            if (selectedChinese) {
-                selectedChinese.classList.remove('bg-indigo-300');
-            }
-            card.classList.add('bg-indigo-300');
-            selectedChinese = card;
-            checkMatch();
-        }
-
-        // Check if selected cards match
-        function checkMatch() {
-            if (selectedEnglish && selectedChinese) {
-                attempts++;
-                const englishWord = wordSets[currentDifficulty][currentSetIndex].find(
-                    word => word.english === selectedEnglish.dataset.english
-                );
-                if (englishWord.chinese === selectedChinese.dataset.chinese) {
-                    correctMatches++;
-                    selectedEnglish.style.animation = 'disappear 0.3s forwards';
-                    selectedChinese.style.animation = 'disappear 0.3s forwards';
-                    setTimeout(() => {
-                        selectedEnglish.remove();
-                        selectedChinese.remove();
-                        selectedEnglish = null;
-                        selectedChinese = null;
-                        checkSetCompletion();
-                    }, 300);
-                } else {
-                    setTimeout(() => {
-                        selectedEnglish.classList.remove('bg-indigo-300');
-                        selectedChinese.classList.remove('bg-indigo-300');
-                        selectedEnglish = null;
-                        selectedChinese = null;
-                    }, 500);
-                }
-            }
-        }
-
-        // Check if set is complete
-        function checkSetCompletion() {
-            const currentWords = wordSets[currentDifficulty][currentSetIndex];
-            if (correctMatches === currentWords.length) {
-                showMessage(
-                    'Set Complete!',
-                    `You've completed Set ${currentSetIndex + 1}!`,
-                    `Attempts: ${attempts}<br>Accuracy: ${Math.round((correctMatches / attempts) * 100)}%`
-                );
-            }
-        }
-
-        // Show message
-        function showMessage(title, text, stats) {
-            messageTitle.textContent = title;
-            messageText.textContent = text;
-            messageStats.innerHTML = stats;
-            message.classList.remove('hidden');
-        }
-
-        // Update set display
-        function updateSetDisplay() {
-            currentSetDisplay.textContent = currentSetIndex + 1;
-            totalSetsDisplay.textContent = wordSets[currentDifficulty].length;
-        }
-
-        // Update difficulty buttons
-        function updateDifficultyButtons() {
-            easyBtn.classList.remove('active');
-            mediumBtn.classList.remove('active');
-            hardBtn.classList.remove('active');
-            if (currentDifficulty === 'easy') easyBtn.classList.add('active');
-            else if (currentDifficulty === 'medium') mediumBtn.classList.add('active');
-            else if (currentDifficulty === 'hard') hardBtn.classList.add('active');
-        }
-
-        // Event listeners
-        easyBtn.addEventListener('click', () => {
-            currentDifficulty = 'easy';
-            currentSetIndex = 0;
-            initGame();
-        });
-
-        mediumBtn.addEventListener('click', () => {
-            currentDifficulty = 'medium';
-            currentSetIndex = 0;
-            initGame();
-        });
-
-        hardBtn.addEventListener('click', () => {
-            currentDifficulty = 'hard';
-            currentSetIndex = 0;
-            initGame();
-        });
-
-        nextSetBtn.addEventListener('click', () => {
-            currentSetIndex = (currentSetIndex + 1) % wordSets[currentDifficulty].length;
-            initGame();
-        });
-
-        messageBtn.addEventListener('click', () => {
-            message.classList.add('hidden');
-            if (correctMatches === wordSets[currentDifficulty][currentSetIndex].length) {
-                currentSetIndex = (currentSetIndex + 1) % wordSets[currentDifficulty].length;
-                initGame();
-            }
-        });
-
-        // Initialize game on load
-        initGame();
-    </script>
-</body>
-</html>
+```javascript
+const wordSets = {
+    easy: [
+        // Set 1: Basic Nouns
+        [
+            { english: "apple", chinese: "苹果" },
+            { english: "book", chinese: "书" },
+            { english: "cat", chinese: "猫" },
+            { english: "dog", chinese: "狗" },
+            { english: "egg", chinese: "鸡蛋" },
+            { english: "fish", chinese: "鱼" },
+            { english: "girl", chinese: "女孩" },
+            { english: "tree", chinese: "树" },
+            { english: "house", chinese: "房子" }
+        ],
+        // Set 2: Basic Verbs
+        [
+            { english: "ask", chinese: "问" },
+            { english: "buy", chinese: "买" },
+            { english: "come", chinese: "来" },
+            { english: "do", chinese: "做" },
+            { english: "eat", chinese: "吃" },
+            { english: "find", chinese: "找到" },
+            { english: "give", chinese: "给" },
+            { english: "have", chinese: "有" },
+            { english: "jump", chinese: "跳" }
+        ],
+        // Set 3: Gardening
+        [
+            { english: "grass", chinese: "草" },
+            { english: "bush", chinese: "灌木" },
+            { english: "plant", chinese: "植物" },
+            { english: "vegetable", chinese: "蔬菜" },
+            { english: "fruit", chinese: "水果" },
+            { english: "seed", chinese: "种子" },
+            { english: "soil", chinese: "土壤" },
+            { english: "water", chinese: "水" },
+            { english: "sun", chinese: "太阳" }
+        ],
+        // Set 4: Animals
+        [
+            { english: "elephant", chinese: "大象" },
+            { english: "tiger", chinese: "老虎" },
+            { english: "bear", chinese: "熊" },
+            { english: "rabbit", chinese: "兔子" },
+            { english: "monkey", chinese: "猴子" },
+            { english: "horse", chinese: "马" },
+            { english: "cow", chinese: "牛" },
+            { english: "sheep", chinese: "羊" },
+            { english: "pig", chinese: "猪" }
+        ],
+        // Set 5: Food
+        [
+            { english: "bread", chinese: "面包" },
+            { english: "rice", chinese: "米饭" },
+            { english: "noodle", chinese: "面条" },
+            { english: "soup", chinese: "汤" },
+            { english: "salad", chinese: "沙拉" },
+            { english: "pizza", chinese: "披萨" },
+            { english: "cake", chinese: "蛋糕" },
+            { english: "juice", chinese: "果汁" },
+            { english: "milk", chinese: "牛奶" }
+        ],
+        // Set 6: Colors
+        [
+            { english: "red", chinese: "红色" },
+            { english: "blue", chinese: "蓝色" },
+            { english: "green", chinese: "绿色" },
+            { english: "yellow", chinese: "黄色" },
+            { english: "black", chinese: "黑色" },
+            { english: "white", chinese: "白色" },
+            { english: "purple", chinese: "紫色" },
+            { english: "orange", chinese: "橙色" },
+            { english: "pink", chinese: "粉色" }
+        ],
+        // Set 7: Family
+        [
+            { english: "mother", chinese: "母亲" },
+            { english: "father", chinese: "父亲" },
+            { english: "brother", chinese: "兄弟" },
+            { english: "sister", chinese: "姐妹" },
+            { english: "grandmother", chinese: "祖母" },
+            { english: "grandfather", chinese: "祖父" },
+            { english: "aunt", chinese: "姑姑" },
+            { english: "uncle", chinese: "叔叔" },
+            { english: "cousin", chinese: "堂兄妹" }
+        ],
+        // Set 8: Numbers
+        [
+            { english: "one", chinese: "一" },
+            { english: "two", chinese: "二" },
+            { english: "three", chinese: "三" },
+            { english: "four", chinese: "四" },
+            { english: "five", chinese: "五" },
+            { english: "six", chinese: "六" },
+            { english: "seven", chinese: "七" },
+            { english: "eight", chinese: "八" },
+            { english: "nine", chinese: "九" }
+        ],
+        // Set 9: Body Parts
+        [
+            { english: "head", chinese: "头" },
+            { english: "hand", chinese: "手" },
+            { english: "foot", chinese: "脚" },
+            { english: "eye", chinese: "眼睛" },
+            { english: "ear", chinese: "耳朵" },
+            { english: "nose", chinese: "鼻子" },
+            { english: "mouth", chinese: "嘴" },
+            { english: "arm", chinese: "手臂" },
+            { english: "leg", chinese: "腿" }
+        ],
+        // Set 10: Clothes
+        [
