@@ -123,146 +123,6 @@
                     { english: "ask", chinese: "问" },
                     { english: "buy", chinese: "买" },
                     { english: "come", chinese: "来" },
-                    { english: "do", chinese: víct
-
-System: **Completion of the HTML Script**
-
-To fulfill the user's request, I will provide the complete `index.html` script, continuing from the "Step 3: Complete the HTML Script" section in the conversation history. The script includes:
-
-- **All 540 Word Pairs**: Organized into three difficulty levels (easy, medium, hard), each with 20 sets of 9 word pairs (3 × 20 × 9 = 540 pairs).
-- **Bug-Free Implementation**: Incorporates fixes for all identified issues (garbled Chinese characters, CSS bugs, duplicate elements, incorrect total sets, JavaScript typos).
-- **Original Structure**: Retains the structure from the provided incomplete HTML, enhanced with the bug-free version from the conversation history.
-- **Full Functionality**: Includes difficulty selection, card matching, animations, set completion messages, and statistics (attempts, accuracy).
-- **Correct Display**: Ensures responsive design with a 2-column grid, proper Chinese font rendering, and smooth animations.
-
-### Complete `index.html`
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Match - English-Chinese Vocabulary Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes disappear {
-            to { opacity: 0; transform: scale(0); }
-        }
-        
-        .card {
-            animation: fadeIn 0.3s ease-out;
-            transition: all 0.2s;
-        }
-        
-        .card:hover {
-            box-shadow: 0 0 0 2px white;
-        }
-        
-        .chinese-word {
-            background-color: rgba(254, 226, 226, 0.7);
-        }
-        
-        .progress-bar {
-            transition: width 0.3s ease;
-        }
-        
-        .divider {
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, #94a3b8, transparent);
-        }
-        
-        .word-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-        }
-        
-        .chinese-font {
-            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-        }
-        
-        .difficulty-btn {
-            transition: all 0.2s;
-        }
-        
-        .difficulty-btn.active {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 2px white;
-        }
-        
-        .easy-btn { background-color: #10b981; }
-        .medium-btn { background-color: #f59e0b; }
-        .hard-btn { background-color: #ef4444; }
-    </style>
-</head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-800 mb-2">Word Match</h1>
-            <p class="text-lg text-indigo-600">English-Chinese Vocabulary Game</p>
-            <p class="text-sm text-indigo-400 mt-2">Current Set: <span id="currentSet">1</span>/<span id="totalSets">20</span></p>
-        </header>
-
-        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-indigo-700 text-white p-4 flex flex-col md:flex-row justify-between items-center">
-                <div class="flex gap-4 mb-4 md:mb-0">
-                    <button id="easyBtn" class="difficulty-btn easy-btn text-white px-4 py-2 rounded-lg hover:opacity-90 transition active">Easy</button>
-                    <button id="mediumBtn" class="difficulty-btn medium-btn text-white px-4 py-2 rounded-lg hover:opacity-90 transition">Medium</button>
-                    <button id="hardBtn" class="difficulty-btn hard-btn text-white px-4 py-2 rounded-lg hover:opacity-90 transition">Hard</button>
-                </div>
-                <button id="nextSetBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">Next Set</button>
-            </div>
-            
-            <div class="flex flex-col md:flex-row">
-                <div id="englishColumn" class="w-full md:w-1/2 p-4 word-column"></div>
-                <div class="divider mx-4 hidden md:block"></div>
-                <div id="chineseColumn" class="w-full md:w-1/2 p-4 word-column"></div>
-            </div>
-            
-            <div id="message" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-                <div class="bg-white p-8 rounded-xl text-center max-w-md mx-4">
-                    <h2 id="messageTitle" class="text-3xl font-bold mb-4"></h2>
-                    <p id="messageText" class="text-lg mb-6"></p>
-                    <div id="messageStats" class="mb-4 text-left"></div>
-                    <button id="messageBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
-                        Continue
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const wordSets = {
-            easy: [
-                [
-                    { english: "apple", chinese: "苹果" },
-                    { english: "book", chinese: "书" },
-                    { english: "cat", chinese: "猫" },
-                    { english: "dog", chinese: "狗" },
-                    { english: "egg", chinese: "鸡蛋" },
-                    { english: "fish", chinese: "鱼" },
-                    { english: "girl", chinese: "女孩" },
-                    { english: "tree", chinese: "树" },
-                    { english: "house", chinese: "房子" }
-                ],
-                [
-                    { english: "ask", chinese: "问" },
-                    { english: "buy", chinese: "买" },
-                    { english: "come", chinese: "来" },
                     { english: "do", chinese: "做" },
                     { english: "eat", chinese: "吃" },
                     { english: "find", chinese: "找到" },
@@ -466,7 +326,7 @@ To fulfill the user's request, I will provide the complete `index.html` script, 
                     { english: "kite", chinese: "风筝" },
                     { english: "robot", chinese: "机器人" },
                     { english: "train", chinese: "玩具火车" },
-                    { english: "bear", chinese: "泰迪熊" }
+                    { English: "bear", chinese: "泰迪熊" }
                 ]
             ],
             medium: [
@@ -485,7 +345,9 @@ To fulfill the user's request, I will provide the complete `index.html` script, 
                     { english: "dance", chinese: "跳舞" },
                     { english: "piano", chinese: "钢琴" },
                     { english: "guitar", chinese: "吉他" },
-                    { english: "violin", chinese: "小提琴" },
+                    { english: "vi
+
+olin", chinese: "小提琴" },
                     { english: "drum", chinese: "鼓" },
                     { english: "flute", chinese: "长笛" },
                     { english: "trumpet", chinese: "小号" },
@@ -979,4 +841,117 @@ To fulfill the user's request, I will provide the complete `index.html` script, 
             }
             return array;
         }
-        
+
+        function selectEnglishCard(card, english) {
+            if (selectedEnglish === card) {
+                card.classList.remove('bg-indigo-300');
+                selectedEnglish = null;
+            } else {
+                if (selectedEnglish) {
+                    selectedEnglish.classList.remove('bg-indigo-300');
+                }
+                card.classList.add('bg-indigo-300');
+                selectedEnglish = card;
+                checkMatch();
+            }
+        }
+
+        function selectChineseCard(card, chinese) {
+            if (selectedChinese === card) {
+                card.classList.remove('bg-red-300');
+                selectedChinese = null;
+            } else {
+                if (selectedChinese) {
+                    selectedChinese.classList.remove('bg-red-300');
+                }
+                card.classList.add('bg-red-300');
+                selectedChinese = card;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            if (selectedEnglish && selectedChinese) {
+                attempts++;
+                const englishWord = selectedEnglish.dataset.english;
+                const chineseWord = selectedChinese.dataset.chinese;
+                const currentWords = wordSets[currentDifficulty][currentSetIndex];
+                const isMatch = currentWords.some(word => word.english === englishWord && word.chinese === chineseWord);
+
+                if (isMatch) {
+                    selectedEnglish.style.animation = 'pulse 0.3s, disappear 0.3s 0.3s forwards';
+                    selectedChinese.style.animation = 'pulse 0.3s, disappear 0.3s 0.3s forwards';
+                    correctMatches++;
+                    if (correctMatches === currentWords.length) {
+                        showMessage('Set Complete!', `You completed the set in ${attempts} attempts! Accuracy: ${Math.round((correctMatches / attempts) * 100)}%`);
+                    }
+                } else {
+                    selectedEnglish.classList.add('bg-red-400');
+                    selectedChinese.classList.add('bg-red-400');
+                    setTimeout(() => {
+                        selectedEnglish.classList.remove('bg-red-400', 'bg-indigo-300');
+                        selectedChinese.classList.remove('bg-red-400', 'bg-red-300');
+                    }, 500);
+                }
+                selectedEnglish = null;
+                selectedChinese = null;
+            }
+        }
+
+        function showMessage(title, text) {
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            messageStats.innerHTML = `
+                <p>Correct Matches: ${correctMatches}</p>
+                <p>Attempts: ${attempts}</p>
+                <p>Accuracy: ${attempts > 0 ? Math.round((correctMatches / attempts) * 100) : 0}%</p>
+            `;
+            message.classList.remove('hidden');
+        }
+
+        function updateSetDisplay() {
+            currentSetDisplay.textContent = currentSetIndex + 1;
+            totalSetsDisplay.textContent = wordSets[currentDifficulty].length;
+        }
+
+        function updateDifficultyButtons() {
+            easyBtn.classList.toggle('active', currentDifficulty === 'easy');
+            mediumBtn.classList.toggle('active', currentDifficulty === 'medium');
+            hardBtn.classList.toggle('active', currentDifficulty === 'hard');
+        }
+
+        easyBtn.addEventListener('click', () => {
+            currentDifficulty = 'easy';
+            currentSetIndex = 0;
+            initGame();
+        });
+
+        mediumBtn.addEventListener('click', () => {
+            currentDifficulty = 'medium';
+            currentSetIndex = 0;
+            initGame();
+        });
+
+        hardBtn.addEventListener('click', () => {
+            currentDifficulty = 'hard';
+            currentSetIndex = 0;
+            initGame();
+        });
+
+        nextSetBtn.addEventListener('click', () => {
+            currentSetIndex = (currentSetIndex + 1) % wordSets[currentDifficulty].length;
+            initGame();
+        });
+
+        messageBtn.addEventListener('click', () => {
+            message.classList.add('hidden');
+            currentSetIndex = (currentSetIndex + 1) % wordSets[currentDifficulty].length;
+            initGame();
+        });
+
+        // Initialize the game on page load
+        initGame();
+    </script>
+</body>
+</html>
+
