@@ -11,34 +11,20 @@
   <header>
     <h1>English-Chinese Word Match Game</h1>
     <p>Match each English word with the correct Chinese meaning.<br>
-    Choose your difficulty and start playing!</p>
+    Complete each set to unlock more challenging words!</p>
   </header>
   <main>
     <section id="controls">
-      <label for="difficulty">Difficulty:</label>
-      <select id="difficulty">
-        <option value="easy">Easy 简单</option>
-        <option value="medium">Medium 中等</option>
-        <option value="hard">Hard 困难</option>
-      </select>
       <button id="start-btn">Start Game</button>
     </section>
     <section id="game" class="hidden">
-      <div id="match-board">
-        <div class="columns">
-          <div>
-            <h2>English</h2>
-            <ul id="english-list"></ul>
-          </div>
-          <div>
-            <h2>Chinese</h2>
-            <ul id="chinese-list"></ul>
-          </div>
-        </div>
-      </div>
+      <h2 id="level-title"></h2>
+      <div id="progress-bar"></div>
+      <div id="match-board" class="grid-board"></div>
       <div id="game-info">
+        <span id="accuracy">Accuracy: 100%</span>
         <span id="score">Score: 0</span>
-        <span id="timer">Time: 0s</span>
+        <span id="set-progress"></span>
         <button id="restart-btn">Restart</button>
       </div>
       <div id="result-popup" class="hidden"></div>
@@ -46,20 +32,13 @@
     <section id="about">
       <h2>About This Game</h2>
       <p>
-        This is a free English-Chinese vocabulary matching game. You can play on any device. Choose a difficulty, match the words, and improve your language skills. Share and enjoy!
+        This is a free English-Chinese vocabulary matching game. Each level consists of 12 pairs of words. Match all to progress through easy, medium, and hard word sets. Train your vocabulary and challenge yourself!
       </p>
-      <h3>Why Play?</h3>
       <ul>
         <li>Boost your English or Chinese vocabulary</li>
         <li>Fun and educational!</li>
         <li>No login needed, free forever</li>
         <li>Mobile friendly</li>
-      </ul>
-      <h3>FAQ</h3>
-      <ul>
-        <li><b>Is this game free?</b> Yes, it's 100% free to play.</li>
-        <li><b>Where does the vocabulary come from?</b> The words are from open educational sources and curated lists.</li>
-        <li><b>How can I support this site?</b> Share it with friends or bookmark for daily practice!</li>
       </ul>
     </section>
   </main>
