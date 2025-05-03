@@ -1,491 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Matching Game</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .card {
-            transition: all 0.3s ease;
-            user-select: none;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .card.selected {
-            background-color: #e0e7ff !important;
-            transform: scale(1.05);
-        }
-        .card.matched {
-            background-color: #d1fae5 !important;
-            cursor: default;
-        }
-        .chinese-font {
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-        .progress-bar {
-            transition: width 0.3s ease;
-        }
-        .columns-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.5rem;
-        }
-        @media (max-width: 768px) {
-            .columns-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .card {
-                padding: 0.5rem;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Word Match - English-Chinese Vocabulary Game</title>
+  <meta name="description" content="Play a fun English-Chinese word match game! Match English words with their correct Chinese meanings. Improve your vocabulary and language skills with random levels of difficulty.">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-indigo-50 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-lg shadow-xl p-6 max-w-5xl w-full">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-800 mb-2">Word Match</h1>
-            <p class="text-lg text-indigo-600">English-Chinese Vocabulary Game</p>
-            <div class="flex justify-center gap-4 mt-2">
-                <p class="text-sm text-indigo-400">Set: <span id="currentSet">1</span>/<span id="totalSets">30</span></p>
-                <p class="text-sm text-indigo-400">Total Accuracy: <span id="totalAccuracy">0</span>%</p>
-            </div>
-            <div class="mt-4">
-                <div class="bg-gray-200 h-2 rounded-full">
-                    <div id="progressBar" class="progress-bar bg-indigo-600 h-2 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
-        </header>
-
-        <div id="columns" class="columns-grid"></div>
-
-        <div class="text-center mt-8">
-            <button id="nextSetBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">Next Set</button>
-            <button id="restartBtn" class="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg ml-4 hover:bg-gray-400 transition-colors">Restart</button>
+<body>
+  <header>
+    <h1>English-Chinese Word Match Game</h1>
+    <p>Match each English word with the correct Chinese meaning.<br>
+    Choose your difficulty and start playing!</p>
+  </header>
+  <main>
+    <section id="controls">
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy 简单</option>
+        <option value="medium">Medium 中等</option>
+        <option value="hard">Hard 困难</option>
+      </select>
+      <button id="start-btn">Start Game</button>
+    </section>
+    <section id="game" class="hidden">
+      <div id="match-board">
+        <div class="columns">
+          <div>
+            <h2>English</h2>
+            <ul id="english-list"></ul>
+          </div>
+          <div>
+            <h2>Chinese</h2>
+            <ul id="chinese-list"></ul>
+          </div>
         </div>
-
-        <div id="message" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-white p-6 rounded-lg text-center">
-                <h2 id="messageTitle" class="text-2xl font-bold mb-4"></h2>
-                <p id="messageText" class="mb-6"></p>
-                <button id="closeModalBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Close</button>
-            </div>
-        </div>
+      </div>
+      <div id="game-info">
+        <span id="score">Score: 0</span>
+        <span id="timer">Time: 0s</span>
+        <button id="restart-btn">Restart</button>
+      </div>
+      <div id="result-popup" class="hidden"></div>
+    </section>
+    <section id="about">
+      <h2>About This Game</h2>
+      <p>
+        This is a free English-Chinese vocabulary matching game. You can play on any device. Choose a difficulty, match the words, and improve your language skills. Share and enjoy!
+      </p>
+      <h3>Why Play?</h3>
+      <ul>
+        <li>Boost your English or Chinese vocabulary</li>
+        <li>Fun and educational!</li>
+        <li>No login needed, free forever</li>
+        <li>Mobile friendly</li>
+      </ul>
+      <h3>FAQ</h3>
+      <ul>
+        <li><b>Is this game free?</b> Yes, it's 100% free to play.</li>
+        <li><b>Where does the vocabulary come from?</b> The words are from open educational sources and curated lists.</li>
+        <li><b>How can I support this site?</b> Share it with friends or bookmark for daily practice!</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <div>
+      &copy; 2025 Word Match Game | Powered by <a href="https://minicrosswordpuzzle.xyz" target="_blank">minicrosswordpuzzle.xyz</a>
+      <br>For learning and fun. All rights reserved.
     </div>
-
-    <script>
-        const wordSets = {
-            easy: [
-                [
-                    { english: "sun", chinese: "太阳" },
-                    { english: "tree", chinese: "树" },
-                    { english: "flower", chinese: "花" },
-                    { english: "river", chinese: "河" },
-                    { english: "mountain", chinese: "山" },
-                    { english: "sky", chinese: "天空" },
-                    { english: "cloud", chinese: "云" },
-                    { english: "star", chinese: "星星" },
-                    { english: "moon", chinese: "月亮" },
-                    { english: "wind", chinese: "风" },
-                    { english: "rain", chinese: "雨" },
-                    { english: "snow", chinese: "雪" }
-                ],
-                [
-                    { english: "ask", chinese: "问" },
-                    { english: "buy", chinese: "买" },
-                    { english: "come", chinese: "来" },
-                    { english: "do", chinese: "做" },
-                    { english: "eat", chinese: "吃" },
-                    { english: "find", chinese: "找到" },
-                    { english: "give", chinese: "给" },
-                    { english: "have", chinese: "有" },
-                    { english: "jump", chinese: "跳" },
-                    { english: "know", chinese: "知道" },
-                    { english: "learn", chinese: "学习" },
-                    { english: "make", chinese: "制作" }
-                ],
-                [
-                    { english: "apple", chinese: "苹果" },
-                    { english: "banana", chinese: "香蕉" },
-                    { english: "orange", chinese: "橙子" },
-                    { english: "grape", chinese: "葡萄" },
-                    { english: "watermelon", chinese: "西瓜" },
-                    { english: "mango", chinese: "芒果" },
-                    { english: "peach", chinese: "桃子" },
-                    { english: "pear", chinese: "梨" },
-                    { english: "strawberry", chinese: "草莓" },
-                    { english: "pineapple", chinese: "菠萝" },
-                    { english: "lemon", chinese: "柠檬" },
-                    { english: "cherry", chinese: "樱桃" }
-                ],
-                // Additional 27 easy sets (sample)
-                [
-                    { english: "cat", chinese: "猫" },
-                    { english: "dog", chinese: "狗" },
-                    { english: "bird", chinese: "鸟" },
-                    { english: "fish", chinese: "鱼" },
-                    { english: "horse", chinese: "马" },
-                    { english: "cow", chinese: "牛" },
-                    { english: "pig", chinese: "猪" },
-                    { english: "sheep", chinese: "羊" },
-                    { english: "rabbit", chinese: "兔子" },
-                    { english: "duck", chinese: "鸭子" },
-                    { english: "chicken", chinese: "鸡" },
-                    { english: "goat", chinese: "山羊" }
-                ],
-                // ... (26 more sets to be added similarly, e.g., colors, numbers, classroom items)
-                // Placeholder for brevity (full list available on request)
-                ...Array(26).fill().map((_, i) => [
-                    { english: `easy_word_${i+1}_1`, chinese: `简单词_${i+1}_1` },
-                    { english: `easy_word_${i+1}_2`, chinese: `简单词_${i+1}_2` },
-                    { english: `easy_word_${i+1}_3`, chinese: `简单词_${i+1}_3` },
-                    { english: `easy_word_${i+1}_4`, chinese: `简单词_${i+1}_4` },
-                    { english: `easy_word_${i+1}_5`, chinese: `简单词_${i+1}_5` },
-                    { english: `easy_word_${i+1}_6`, chinese: `简单词_${i+1}_6` },
-                    { english: `easy_word_${i+1}_7`, chinese: `简单词_${i+1}_7` },
-                    { english: `easy_word_${i+1}_8`, chinese: `简单词_${i+1}_8` },
-                    { english: `easy_word_${i+1}_9`, chinese: `简单词_${i+1}_9` },
-                    { english: `easy_word_${i+1}_10`, chinese: `简单词_${i+1}_10` },
-                    { english: `easy_word_${i+1}_11`, chinese: `简单词_${i+1}_11` },
-                    { english: `easy_word_${i+1}_12`, chinese: `简单词_${i+1}_12` }
-                ])
-            ],
-            medium: [
-                [
-                    { english: "hobby", chinese: "爱好" },
-                    { english: "reading", chinese: "阅读" },
-                    { english: "writing", chinese: "写作" },
-                    { english: "painting", chinese: "绘画" },
-                    { english: "drawing", chinese: "素描" },
-                    { english: "photography", chinese: "摄影" },
-                    { english: "music", chinese: "音乐" },
-                    { english: "singing", chinese: "唱歌" },
-                    { english: "dancing", chinese: "跳舞" },
-                    { english: "cooking", chinese: "烹饪" },
-                    { english: "baking", chinese: "烘焙" },
-                    { english: "gardening", chinese: "园艺" }
-                ],
-                [
-                    { english: "accomplish", chinese: "完成" },
-                    { english: "accumulate", chinese: "积累" },
-                    { english: "accuse", chinese: "指控" },
-                    { english: "achieve", chinese: "实现" },
-                    { english: "acknowledge", chinese: "承认" },
-                    { english: "adapt", chinese: " nemcsak" },
-                    { english: "adjust", chinese: "调整" },
-                    { english: "admire", chinese: "欣赏" },
-                    { english: "admit", chinese: "承认" },
-                    { english: "adopt", chinese: "采纳" },
-                    { english: "advance", chinese: "前进" },
-                    { english: "affect", chinese: "影响" }
-                ],
-                [
-                    { english: "fishing", chinese: "钓鱼" },
-                    { english: "hiking", chinese: "徒步旅行" },
-                    { english: "camping", chinese: "露营" },
-                    { english: "traveling", chinese: "旅行" },
-                    { english: "swimming", chinese: "游泳" },
-                    { english: "running", chinese: "跑步" },
-                    { english: "yoga", chinese: "瑜伽" },
-                    { english: "cycling", chinese: "骑自行车" },
-                    { english: "skiing", chinese: "滑雪" },
-                    { english: "surfing", chinese: "冲浪" },
-                    { english: "climbing", chinese: "攀岩" },
-                    { english: "golf", chinese: "高尔夫" }
-                ],
-                // Additional 27 medium sets (sample)
-                [
-                    { english: "listen", chinese: "听" },
-                    { english: "speak", chinese: "说" },
-                    { english: "read", chinese: "读" },
-                    { english: "write", chinese: "写" },
-                    { english: "think", chinese: "思考" },
-                    { english: "understand", chinese: "理解" },
-                    { english: "explain", chinese: "解释" },
-                    { english: "discuss", chinese: "讨论" },
-                    { english: "decide", chinese: "决定" },
-                    { english: "plan", chinese: "计划" },
-                    { english: "organize", chinese: "组织" },
-                    { english: "manage", chinese: "管理" }
-                ],
-                // ... (26 more sets to be added, e.g., emotions, daily routines)
-                ...Array(26).fill().map((_, i) => [
-                    { english: `medium_word_${i+1}_1`, chinese: `中等词_${i+1}_1` },
-                    { english: `medium_word_${i+1}_2`, chinese: `中等词_${i+1}_2` },
-                    { english: `medium_word_${i+1}_3`, chinese: `中等词_${i+1}_3` },
-                    { english: `medium_word_${i+1}_4`, chinese: `中等词_${i+1}_4` },
-                    { english: `medium_word_${i+1}_5`, chinese: `中等词_${i+1}_5` },
-                    { english: `medium_word_${i+1}_6`, chinese: `中等词_${i+1}_6` },
-                    { english: `medium_word_${i+1}_7`, chinese: `中等词_${i+1}_7` },
-                    { english: `medium_word_${i+1}_8`, chinese: `中等词_${i+1}_8` },
-                    { english: `medium_word_${i+1}_9`, chinese: `中等词_${i+1}_9` },
-                    { english: `medium_word_${i+1}_10`, chinese: `中等词_${i+1}_10` },
-                    { english: `medium_word_${i+1}_11`, chinese: `中等词_${i+1}_11` },
-                    { english: `medium_word_${i+1}_12`, chinese: `中等词_${i+1}_12` }
-                ])
-            ],
-            hard: [
-                [
-                    { english: "ecology", chinese: "生态学" },
-                    { english: "psychology", chinese: "心理学" },
-                    { english: "scientist", chinese: "科学家" },
-                    { english: "experiment", chinese: "实验" },
-                    { english: "research", chinese: "研究" },
-                    { english: "theory", chinese: "理论" },
-                    { english: "discovery", chinese: "发现" },
-                    { english: "invention", chinese: "发明" },
-                    { english: "technology", chinese: "技术" },
-                    { english: "laboratory", chinese: "实验室" },
-                    { english: "microscope", chinese: "显微镜" },
-                    { english: "telescope", chinese: "望远镜" }
-                ],
-                [
-                    { english: "average", chinese: "平均的" },
-                    { english: "aware", chinese: "意识到的" },
-                    { english: "basic", chinese: "基本的" },
-                    { english: "brilliant", chinese: "杰出的" },
-                    { english: "capable", chinese: "有能力的" },
-                    { english: "careful", chinese: "小心的" },
-                    { english: "certain", chinese: "确定的" },
-                    { english: "civil", chinese: "公民的" },
-                    { english: "clear", chinese: "清楚的" },
-                    { english: "clever", chinese: "聪明的" },
-                    { english: "complex", chinese: "复杂的" },
-                    { english: "confident", chinese: "自信的" }
-                ],
-                [
-                    { english: "business", chinese: "商业" },
-                    { english: "company", chinese: "公司" },
-                    { english: "corporation", chinese: "企业" },
-                    { english: "enterprise", chinese: "企业" },
-                    { english: "industry", chinese: "产业" },
-                    { english: "trade", chinese: "贸易" },
-                    { english: "commerce", chinese: "商业" },
-                    { english: "market", chinese: "市场" },
-                    { english: "product", chinese: "产品" },
-                    { english: "service", chinese: "服务" },
-                    { english: "customer", chinese: "客户" },
-                    { english: "client", chinese: "客户" }
-                ],
-                // Additional 27 hard sets (sample)
-                [
-                    { english: "strategy", chinese: "战略" },
-                    { english: "investment", chinese: "投资" },
-                    { english: "finance", chinese: "金融" },
-                    { english: "economy", chinese: "经济" },
-                    { english: "profit", chinese: "利润" },
-                    { english: "revenue", chinese: "收入" },
-                    { english: "budget", chinese: "预算" },
-                    { english: "contract", chinese: "合同" },
-                    { english: "negotiation", chinese: "谈判" },
-                    { english: "partnership", chinese: "合作关系" },
-                    { english: "innovation", chinese: "创新" },
-                    { english: "regulation", chinese: "法规" }
-                ],
-                // ... (26 more sets to be added, e.g., legal terms, academic concepts)
-                ...Array(26).fill().map((_, i) => [
-                    { english: `hard_word_${i+1}_1`, chinese: `困难词_${i+1}_1` },
-                    { english: `hard_word_${i+1}_2`, chinese: `困难词_${i+1}_2` },
-                    { english: `hard_word_${i+1}_3`, chinese: `困难词_${i+1}_3` },
-                    { english: `hard_word_${i+1}_4`, chinese: `困难词_${i+1}_4` },
-                    { english: `hard_word_${i+1}_5`, chinese: `困难词_${i+1}_5` },
-                    { english: `hard_word_${i+1}_6`, chinese: `困难词_${i+1}_6` },
-                    { english: `hard_word_${i+1}_7`, chinese: `困难词_${i+1}_7` },
-                    { english: `hard_word_${i+1}_8`, chinese: `困难词_${i+1}_8` },
-                    { english: `hard_word_${i+1}_9`, chinese: `困难词_${i+1}_9` },
-                    { english: `hard_word_${i+1}_10`, chinese: `困难词_${i+1}_10` },
-                    { english: `hard_word_${i+1}_11`, chinese: `困难词_${i+1}_11` },
-                    { english: `hard_word_${i+1}_12`, chinese: `困难词_${i+1}_12` }
-                ])
-            ]
-        };
-
-        let currentDifficulty = 'easy';
-        let currentSetIndex = 0;
-        let matchedPairs = 0;
-        let totalAttempts = 0;
-        let correctAttempts = 0;
-        let totalAccuracy = 0;
-        let selectedEnglish = null;
-        let selectedChinese = null;
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function loadWordSet() {
-            const columns = document.getElementById('columns');
-            const words = wordSets[currentDifficulty][currentSetIndex] || [];
-            if (!words.length) {
-                showMessage('Error', 'No words available for this set.', true);
-                return;
-            }
-
-            const shuffledEnglish = shuffleArray([...words]);
-            const shuffledChinese = shuffleArray([...words]);
-
-            const fragment = document.createDocumentFragment();
-            const rows = 6; // 12 pairs in 6 rows (2 pairs per row)
-
-            for (let i = 0; i < rows; i++) {
-                // English 1
-                const eng1 = document.createElement('div');
-                eng1.className = 'card bg-blue-100 p-3 rounded-lg cursor-pointer text-center';
-                eng1.textContent = shuffledEnglish[i].english;
-                eng1.dataset.english = shuffledEnglish[i].english;
-                eng1.addEventListener('click', () => selectCard(eng1, 'english'));
-                fragment.appendChild(eng1);
-
-                // English 2
-                const eng2 = document.createElement('div');
-                eng2.className = 'card bg-blue-100 p-3 rounded-lg cursor-pointer text-center';
-                eng2.textContent = shuffledEnglish[i + rows].english;
-                eng2.dataset.english = shuffledEnglish[i + rows].english;
-                eng2.addEventListener('click', () => selectCard(eng2, 'english'));
-                fragment.appendChild(eng2);
-
-                // Chinese 1
-                const chi1 = document.createElement('div');
-                chi1.className = 'card bg-yellow-100 p-3 rounded-lg cursor-pointer text-center chinese-font';
-                chi1.textContent = shuffledChinese[i].chinese;
-                chi1.dataset.chinese = shuffledChinese[i].chinese;
-                chi1.addEventListener('click', () => selectCard(chi1, 'chinese'));
-                fragment.appendChild(chi1);
-
-                // Chinese 2
-                const chi2 = document.createElement('div');
-                chi2.className = 'card bg-yellow-100 p-3 rounded-lg cursor-pointer text-center chinese-font';
-                chi2.textContent = shuffledChinese[i + rows].chinese;
-                chi2.dataset.chinese = shuffledChinese[i + rows].chinese;
-                chi2.addEventListener('click', () => selectCard(chi2, 'chinese'));
-                fragment.appendChild(chi2);
-            }
-
-            columns.innerHTML = '';
-            columns.appendChild(fragment);
-
-            document.getElementById('currentSet').textContent = currentSetIndex + 1;
-            document.getElementById('totalSets').textContent = wordSets[currentDifficulty].length;
-            updateProgressBar();
-        }
-
-        function selectCard(card, type) {
-            if (card.classList.contains('matched')) return;
-
-            if (type === 'english') {
-                if (selectedEnglish) selectedEnglish.classList.remove('selected');
-                selectedEnglish = card;
-                card.classList.add('selected');
-            } else {
-                if (selectedChinese) selectedChinese.classList.remove('selected');
-                selectedChinese = card;
-                card.classList.add('selected');
-            }
-
-            if (selectedEnglish && selectedChinese) {
-                checkMatch();
-            }
-        }
-
-        function checkMatch() {
-            totalAttempts++;
-            const english = selectedEnglish.dataset.english;
-            const chinese = selectedChinese.dataset.chinese;
-            const word = wordSets[currentDifficulty][currentSetIndex].find(w => w.english === english);
-
-            if (word && word.chinese === chinese) {
-                correctAttempts++;
-                matchedPairs++;
-                selectedEnglish.classList.remove('selected');
-                selectedChinese.classList.remove('selected');
-                selectedEnglish.classList.add('matched');
-                selectedChinese.classList.add('matched');
-                selectedEnglish.style.pointerEvents = 'none';
-                selectedChinese.style.pointerEvents = 'none';
-
-                if (matchedPairs === wordSets[currentDifficulty][currentSetIndex].length) {
-                    showMessage('Set Complete!', `Accuracy: ${(correctAttempts / totalAttempts * 100).toFixed(2)}%`, true);
-                    updateStats();
-                }
-            } else {
-                selectedEnglish.classList.remove('selected');
-                selectedChinese.classList.remove('selected');
-                selectedEnglish.classList.add('bg-red-100');
-                selectedChinese.classList.add('bg-red-100');
-                setTimeout(() => {
-                    selectedEnglish.classList.remove('bg-red-100');
-                    selectedChinese.classList.remove('bg-red-100');
-                }, 500);
-            }
-
-            selectedEnglish = null;
-            selectedChinese = null;
-            updateStats();
-        }
-
-        function updateStats() {
-            const setAccuracy = totalAttempts > 0 ? (correctAttempts / totalAttempts * 100) : 0;
-            const totalSetsPlayed = currentSetIndex + 1;
-            totalAccuracy = ((totalAccuracy * (totalSetsPlayed - 1)) + setAccuracy) / totalSetsPlayed;
-            document.getElementById('totalAccuracy').textContent = totalAccuracy.toFixed(2);
-        }
-
-        function updateProgressBar() {
-            const progress = (matchedPairs / wordSets[currentDifficulty][currentSetIndex].length) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-        }
-
-        function showMessage(title, text, keepOpen = false) {
-            document.getElementById('messageTitle').textContent = title;
-            document.getElementById('messageText').textContent = text;
-            document.getElementById('message').classList.remove('hidden');
-
-            if (!keepOpen) {
-                setTimeout(() => {
-                    document.getElementById('message').classList.add('hidden');
-                }, 2000);
-            }
-        }
-
-        function startGame() {
-            matchedPairs = 0;
-            totalAttempts = 0;
-            correctAttempts = 0;
-            loadWordSet();
-        }
-
-        document.getElementById('nextSetBtn').addEventListener('click', () => {
-            if (currentSetIndex < wordSets[currentDifficulty].length - 1) {
-                currentSetIndex++;
-                startGame();
-            } else {
-                showMessage('Game Over!', `Final Accuracy: ${totalAccuracy.toFixed(2)}%`, true);
-            }
-        });
-
-        document.getElementById('restartBtn').addEventListener('click', () => {
-            currentSetIndex = 0;
-            totalAccuracy = 0;
-            document.getElementById('totalAccuracy').textContent = '0';
-            startGame();
-        });
-
-        document.getElementById('closeModalBtn').addEventListener('click', () => {
-            document.getElementById('message').classList.add('hidden');
-        });
-
-        document.getElementById('closeModalBtn').addEventListener('touchend', () => {
-            document.getElementById('message').classList.add('hidden');
-        });
-
-        startGame();
-    </script>
+    <div>
+      <small>广告位（AdSense banner）</small>
+    </div>
+  </footer>
+  <script src="words.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
