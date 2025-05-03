@@ -38,6 +38,7 @@ function shuffle(arr) {
 }
 
 async function loadWordList(difficulty) {
+  // static/ 目录下
   const res = await fetch(`static/${difficulty}.json`);
   return await res.json();
 }
@@ -70,9 +71,13 @@ function stopTimer() {
 
 function renderCards(words) {
   cardContainer.innerHTML = '';
+  if (!words || words.length === 0) {
+    remainingElem.textContent = '0';
+    return;
+  }
   let enCards = shuffle(words.map(w => ({...w, type: 'english'})));
   let zhCards = shuffle(words.map(w => ({...w, type: 'chinese'})));
-  enCards.concat(zhCards).forEach((item, i) => {
+  enCards.concat(zhCards).forEach((item) => {
     const div = document.createElement('div');
     div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center ${item.type==='english'?'bg-blue-100 text-blue-800':'bg-red-100 text-red-800'}`;
     div.dataset.pair = item.english;
@@ -99,7 +104,8 @@ function checkMatch() {
     matched++;
     score += 10;
     scoreElem.textContent = score;
-    if (matched === wordList.length) endGame();
+    // 当前组配对数量达到单词数，结束本组
+    if (matched === (wordList[setIndex] ? wordList[setIndex].length : 0)) endGame();
   } else {
     setTimeout(() => {
       a.classList.remove('selected');
@@ -113,13 +119,14 @@ function checkMatch() {
 
 function endGame() {
   stopTimer();
-  messageTitle.textContent = '恭喜通关！';
-  messageText.innerHTML = `用时：${formatTime(timer)}<br>得分：${score}<br>正确配对：${matched}`;
+  messageTitle.textContent = 'Congratulations!';
+  messageText.innerHTML = `Time: ${formatTime(timer)}<br>Score: ${score}<br>Correct matches: ${matched}`;
   message.classList.remove('hidden');
 }
 
 function nextSet() {
   setIndex++;
+  if (setIndex >= wordList.length) setIndex = 0;
   startGame();
 }
 
@@ -132,13 +139,16 @@ async function startGame() {
   scoreElem.textContent = '0';
   timerElem.textContent = '00:00';
   message.classList.add('hidden');
+  // 当前难度词库缓存
   if (!window[`_${currentDifficulty}Words`]) {
     wordList = await loadWordList(currentDifficulty);
     window[`_${currentDifficulty}Words`] = wordList;
   } else {
     wordList = window[`_${currentDifficulty}Words`];
   }
-  renderCards(wordList.slice(setIndex*10, (setIndex+1)*10));
+  // 组数溢出保护
+  if (setIndex >= wordList.length) setIndex = 0;
+  renderCards(wordList[setIndex] || []);
   startTimer();
 }
 
