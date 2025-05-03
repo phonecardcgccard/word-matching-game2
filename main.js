@@ -1,7 +1,8 @@
-// Word Match Game Logic, grid: 4 cols (2 English, 2 Chinese), 12 pairs per set, accuracy tracking, level progression
+// Word Matching Game with Difficulty/Next Controls and Colored Cards
 
 const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
+const nextBtn = document.getElementById("next-btn");
 const controlsSection = document.getElementById("controls");
 const gameSection = document.getElementById("game");
 const levelTitle = document.getElementById("level-title");
@@ -11,7 +12,9 @@ const resultPopup = document.getElementById("result-popup");
 const accuracySpan = document.getElementById("accuracy");
 const scoreSpan = document.getElementById("score");
 const setProgressSpan = document.getElementById("set-progress");
+const difficultyBtns = Array.from(document.querySelectorAll('.difficulty-btn'));
 
+let selectedLevel = 'easy';
 let currentLevelIdx = 0;
 let currentSetIdx = 0;
 let currentPairs = [];
@@ -21,9 +24,22 @@ let selectedEn = null, selectedZh = null;
 let enCards = [], zhCards = [];
 let busy = false;
 
+difficultyBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    difficultyBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedLevel = btn.dataset.level;
+    currentLevelIdx = WORD_LEVELS.indexOf(selectedLevel);
+    currentSetIdx = 0;
+    score = 0;
+    if (!controlsSection.classList.contains('hidden')) return;
+    loadCurrentSet();
+  });
+});
+
 async function startGame() {
   await loadAllWordSets();
-  currentLevelIdx = 0;
+  currentLevelIdx = WORD_LEVELS.indexOf(selectedLevel);
   currentSetIdx = 0;
   score = 0;
   showGameUI();
@@ -48,13 +64,11 @@ function loadCurrentSet() {
 
   const level = WORD_LEVELS[currentLevelIdx];
   const set = getWordSet(level, currentSetIdx);
-  // 生成英文和中文两个独立乱序数组（但配对通过index对应）
   let enArr = set.map(pair => pair.english);
   let zhArr = set.map(pair => pair.chinese);
   enArr = shuffle(enArr);
   zhArr = shuffle(zhArr);
 
-  // 记录当前所有pair
   currentPairs = [];
   for (let i = 0; i < set.length; i++) {
     currentPairs.push({ english: set[i].english, chinese: set[i].chinese });
@@ -64,13 +78,19 @@ function loadCurrentSet() {
   updateStats();
   updateLevelTitle();
   updateProgressBar();
+
+  // Next按钮控制
+  if (currentSetIdx < getLevelCount(level) - 1) {
+    nextBtn.classList.remove('hidden');
+  } else {
+    nextBtn.classList.add('hidden');
+  }
 }
 
 function renderGrid(enArr, zhArr) {
   matchBoard.innerHTML = "";
   enCards = [];
   zhCards = [];
-  // 2列英文, 2列中文，共4列，12行（每列6个）
   let grid = [];
   for (let i = 0; i < 6; i++) {
     grid.push([
@@ -80,15 +100,13 @@ function renderGrid(enArr, zhArr) {
       { type: "zh", text: zhArr[i + 6], idx: i + 6 }
     ]);
   }
-  // 组装到matchBoard
-  // 先flatten为24格
   let flat = [];
   for (let i = 0; i < grid.length; i++) {
     flat.push(grid[i][0], grid[i][1], grid[i][2], grid[i][3]);
   }
   flat.forEach((cell, idx) => {
     const div = document.createElement("div");
-    div.className = "word-card";
+    div.className = "word-card " + (cell.type === "en" ? "en-card" : "zh-card");
     div.textContent = cell.text;
     div.dataset.type = cell.type;
     div.dataset.index = cell.idx;
@@ -122,7 +140,6 @@ function checkMatch() {
   const enWord = selectedEn.textContent;
   const zhWord = selectedZh.textContent;
   attempts++;
-  // 检查是否为一对
   let isMatch = false;
   for (const pair of currentPairs) {
     if (pair.english === enWord && pair.chinese === zhWord) {
@@ -144,7 +161,7 @@ function checkMatch() {
     busy = false;
     if (matchedPairs === 12) {
       setTimeout(() => {
-        nextSetOrLevel();
+        nextSetOrLevel(false);
       }, 700);
     }
   } else {
@@ -183,19 +200,20 @@ function updateProgressBar() {
   progressBar.innerHTML = `<div class="bar" style="width:${percent}%;"></div>`;
 }
 
-function nextSetOrLevel() {
+function nextSetOrLevel(userManualNext = false) {
   currentSetIdx++;
   const level = WORD_LEVELS[currentLevelIdx];
   if (currentSetIdx < getLevelCount(level)) {
     loadCurrentSet();
   } else {
-    // 进入下一个难度
-    if (currentLevelIdx < WORD_LEVELS.length - 1) {
+    // 仅自动推进到下一难度，用户点Next按钮只在本难度内
+    if (!userManualNext && currentLevelIdx < WORD_LEVELS.length - 1) {
       currentLevelIdx++;
       currentSetIdx = 0;
       loadCurrentSet();
+    } else if (userManualNext) {
+      nextBtn.classList.add('hidden');
     } else {
-      // 游戏全部完成
       showFinalResult();
     }
   }
@@ -220,6 +238,10 @@ function restartGame() {
   score = 0;
 }
 
+nextBtn.addEventListener("click", () => {
+  nextSetOrLevel(true);
+});
+
 // Fisher-Yates
 function shuffle(arr) {
   let a = arr.slice();
@@ -230,10 +252,9 @@ function shuffle(arr) {
   return a;
 }
 
-// --- Event Listeners ---
 startBtn.addEventListener("click", startGame);
 restartBtn.addEventListener("click", restartGame);
-// Optional: allow pressing Enter to start game
+
 document.addEventListener("keydown", (e) => {
   if (controlsSection && !controlsSection.classList.contains("hidden")) {
     if (e.key === "Enter") startGame();
