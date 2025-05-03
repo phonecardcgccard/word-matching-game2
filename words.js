@@ -1,38 +1,24 @@
-// English-Chinese vocabulary list, grouped by difficulty
-const WORDS = [
-  // Easy
-  { en: "apple", zh: "苹果", level: "easy" },
-  { en: "dog", zh: "狗", level: "easy" },
-  { en: "cat", zh: "猫", level: "easy" },
-  { en: "book", zh: "书", level: "easy" },
-  { en: "car", zh: "汽车", level: "easy" },
-  { en: "water", zh: "水", level: "easy" },
-  { en: "red", zh: "红色", level: "easy" },
-  { en: "happy", zh: "高兴", level: "easy" },
-  { en: "school", zh: "学校", level: "easy" },
-  { en: "fish", zh: "鱼", level: "easy" },
+// Loads and provides word sets for each level
+const WORD_LEVELS = ['easy', 'medium', 'hard'];
+let ALL_WORD_SETS = {}; // {easy: [set1, set2, ...], ...}
 
-  // Medium
-  { en: "mountain", zh: "山", level: "medium" },
-  { en: "language", zh: "语言", level: "medium" },
-  { en: "river", zh: "河流", level: "medium" },
-  { en: "market", zh: "市场", level: "medium" },
-  { en: "bicycle", zh: "自行车", level: "medium" },
-  { en: "window", zh: "窗户", level: "medium" },
-  { en: "history", zh: "历史", level: "medium" },
-  { en: "medicine", zh: "药", level: "medium" },
-  { en: "library", zh: "图书馆", level: "medium" },
-  { en: "family", zh: "家庭", level: "medium" },
+async function loadAllWordSets() {
+  for (const level of WORD_LEVELS) {
+    const resp = await fetch(`${level}.json`);
+    const arr = await resp.json();
+    // 修正格式和异常（如某些中文不是字符串）
+    ALL_WORD_SETS[level] = arr.map(set =>
+      set.map(pair => ({
+        english: String(pair.english).trim(),
+        chinese: (typeof pair.chinese === "string" ? pair.chinese : String(pair.chinese)).trim()
+      }))
+    );
+  }
+}
 
-  // Hard
-  { en: "philosophy", zh: "哲学", level: "hard" },
-  { en: "democracy", zh: "民主", level: "hard" },
-  { en: "architecture", zh: "建筑学", level: "hard" },
-  { en: "phenomenon", zh: "现象", level: "hard" },
-  { en: "entrepreneur", zh: "企业家", level: "hard" },
-  { en: "constitution", zh: "宪法", level: "hard" },
-  { en: "metaphor", zh: "隐喻", level: "hard" },
-  { en: "photosynthesis", zh: "光合作用", level: "hard" },
-  { en: "hypothesis", zh: "假说", level: "hard" },
-  { en: "aesthetics", zh: "美学", level: "hard" }
-];
+function getLevelCount(level) {
+  return ALL_WORD_SETS[level] ? ALL_WORD_SETS[level].length : 0;
+}
+function getWordSet(level, idx) {
+  return ALL_WORD_SETS[level][idx];
+}
