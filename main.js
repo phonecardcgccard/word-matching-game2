@@ -34,11 +34,10 @@ function setActiveBtn(difficulty) {
 }
 
 function shuffle(arr) {
-  return arr.map(v => [Math.random(), v]).sort().map(a => a[1]);
+  return arr.map(v => [Math.random(), v]).sort(() => Math.random() - 0.5).map(a => a[1]);
 }
 
 async function loadWordList(difficulty) {
-  // static/ 目录下
   const res = await fetch(`static/${difficulty}.json`);
   return await res.json();
 }
@@ -69,31 +68,27 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
-// 4列（2列英文，2列中文）网格布局
 function renderCards(words) {
   cardContainer.innerHTML = '';
+  cardContainer.className = 'grid grid-cols-4 gap-4 w-full';
+
   if (!words || words.length === 0) {
     remainingElem.textContent = '0';
     return;
   }
-  cardContainer.className = "grid grid-cols-4 gap-4 w-full"; // 设置4列
 
-  // 将英文和中文卡片分组
+  // 打乱英文和中文数组
   let enCards = shuffle(words.map(w => ({...w, type: 'english'})));
   let zhCards = shuffle(words.map(w => ({...w, type: 'chinese'})));
+  let maxRows = Math.ceil(words.length / 2);
 
-  // 2列英文，2列中文，纵向交错排列
-  // 假定每组为N个单词（如12），则前两列为英文，后两列为中文
-  // 先拼出顺序数组：enCards[0]、enCards[1]、...、zhCards[0]、zhCards[1]、...
-  // 然后每行插入2个英文+2个中文
-
-  let rows = Math.ceil(words.length / 2); // 每行2英2中
-  for (let i = 0; i < rows; i++) {
-    // 英文卡
-    for (let j = 0; j < 2; j++) {
-      let enIndex = i * 2 + j;
-      if (enIndex < enCards.length) {
-        const item = enCards[enIndex];
+  // 每行 2 英文 + 2 中文
+  for (let row = 0; row < maxRows; row++) {
+    // 英文卡片
+    for (let i = 0; i < 2; i++) {
+      let idx = row * 2 + i;
+      if (idx < enCards.length) {
+        const item = enCards[idx];
         const div = document.createElement('div');
         div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-blue-100 text-blue-800`;
         div.dataset.pair = item.english;
@@ -101,13 +96,18 @@ function renderCards(words) {
         div.textContent = item.english;
         div.onclick = () => onCardClick(div);
         cardContainer.appendChild(div);
+      } else {
+        // 填充空格保持布局
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'invisible';
+        cardContainer.appendChild(emptyDiv);
       }
     }
-    // 中文卡
-    for (let j = 0; j < 2; j++) {
-      let zhIndex = i * 2 + j;
-      if (zhIndex < zhCards.length) {
-        const item = zhCards[zhIndex];
+    // 中文卡片
+    for (let i = 0; i < 2; i++) {
+      let idx = row * 2 + i;
+      if (idx < zhCards.length) {
+        const item = zhCards[idx];
         const div = document.createElement('div');
         div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-red-100 text-red-800`;
         div.dataset.pair = item.english;
@@ -115,10 +115,14 @@ function renderCards(words) {
         div.textContent = item.chinese;
         div.onclick = () => onCardClick(div);
         cardContainer.appendChild(div);
+      } else {
+        // 填充空格保持布局
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'invisible';
+        cardContainer.appendChild(emptyDiv);
       }
     }
   }
-
   remainingElem.textContent = words.length;
 }
 
@@ -137,7 +141,6 @@ function checkMatch() {
     matched++;
     score += 10;
     scoreElem.textContent = score;
-    // 当前组配对数量达到单词数，结束本组
     if (matched === (wordList[setIndex] ? wordList[setIndex].length : 0)) endGame();
   } else {
     setTimeout(() => {
@@ -152,8 +155,8 @@ function checkMatch() {
 
 function endGame() {
   stopTimer();
-  messageTitle.textContent = 'Congratulations!';
-  messageText.innerHTML = `Time: ${formatTime(timer)}<br>Score: ${score}<br>Correct matches: ${matched}`;
+  messageTitle.textContent = '恭喜通关！';
+  messageText.innerHTML = `用时：${formatTime(timer)}<br>得分：${score}<br>正确配对：${matched}`;
   message.classList.remove('hidden');
 }
 
@@ -172,14 +175,12 @@ async function startGame() {
   scoreElem.textContent = '0';
   timerElem.textContent = '00:00';
   message.classList.add('hidden');
-  // 当前难度词库缓存
   if (!window[`_${currentDifficulty}Words`]) {
     wordList = await loadWordList(currentDifficulty);
     window[`_${currentDifficulty}Words`] = wordList;
   } else {
     wordList = window[`_${currentDifficulty}Words`];
   }
-  // 组数溢出保护
   if (setIndex >= wordList.length) setIndex = 0;
   renderCards(wordList[setIndex] || []);
   startTimer();
