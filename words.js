@@ -22,3 +22,4 @@ function getLevelCount(level) {
 function getWordSet(level, idx) {
   return ALL_WORD_SETS[level][idx];
 }
+
