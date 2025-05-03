@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Word Match - English-Chinese Vocabulary Game</title>
+  <meta name="description" content="Play a fun English-Chinese word match game! Match English words with their correct Chinese meanings. Improve your vocabulary and language skills with random levels of difficulty.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>English-Chinese Word Match Game</h1>
+    <p>Match each English word with the correct Chinese meaning.<br>
+    Complete each set to unlock more challenging words!</p>
+  </header>
+  <main>
+    <section id="controls">
+      <div id="difficulty-buttons" class="difficulty-group">
+        <button data-level="easy" class="difficulty-btn active">Easy 简单</button>
+        <button data-level="medium" class="difficulty-btn">Medium 中等</button>
+        <button data-level="hard" class="difficulty-btn">Hard 困难</button>
+      </div>
+      <button id="start-btn">Start Game</button>
+      <button id="next-btn" class="hidden">Next</button>
+    </section>
+    <section id="game" class="hidden">
+      <h2 id="level-title"></h2>
+      <div id="progress-bar"></div>
+      <div id="match-board" class="grid-board"></div>
+      <div id="game-info">
+        <span id="accuracy">Accuracy: 100%</span>
+        <span id="score">Score: 0</span>
+        <span id="set-progress"></span>
+        <button id="restart-btn">Restart</button>
+      </div>
+      <div id="result-popup" class="hidden"></div>
+    </section>
+    <section id="about">
+      <h2>About This Game</h2>
+      <p>
+        This is a free English-Chinese vocabulary matching game. Each level consists of 12 pairs of words. Match all to progress through easy, medium, and hard word sets. Train your vocabulary and challenge yourself!
+      </p>
+      <ul>
+        <li>Boost your English or Chinese vocabulary</li>
+        <li>Fun and educational!</li>
+        <li>No login needed, free forever</li>
+        <li>Mobile friendly</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <div>
+      &copy; 2025 Word Match Game | Powered by <a href="https://minicrosswordpuzzle.xyz" target="_blank">minicrosswordpuzzle.xyz</a>
+      <br>For learning and fun. All rights reserved.
+    </div>
+    <div>
+      <small>广告位（AdSense banner）</small>
+    </div>
+  </footer>
+  <script src="words.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
+
