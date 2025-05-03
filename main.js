@@ -68,6 +68,7 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
+// 实现每行2英文2中文，4列纵向对齐
 function renderCards(words) {
   cardContainer.innerHTML = '';
   cardContainer.className = 'grid grid-cols-4 gap-4 w-full';
@@ -77,46 +78,45 @@ function renderCards(words) {
     return;
   }
 
-  // 打乱英文和中文数组
+  // 英文和中文卡片各自独立洗牌
   let enCards = shuffle(words.map(w => ({...w, type: 'english'})));
   let zhCards = shuffle(words.map(w => ({...w, type: 'chinese'})));
-  let maxRows = Math.ceil(words.length / 2);
 
-  // 每行 2 英文 + 2 中文
-  for (let row = 0; row < maxRows; row++) {
-    // 英文卡片
-    for (let i = 0; i < 2; i++) {
-      let idx = row * 2 + i;
+  const total = words.length;
+  const rows = Math.ceil(total / 2); // 每行2英文+2中文
+
+  for (let row = 0; row < rows; row++) {
+    // 每行2英文
+    for (let col = 0; col < 2; col++) {
+      const idx = row * 2 + col;
       if (idx < enCards.length) {
         const item = enCards[idx];
         const div = document.createElement('div');
         div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-blue-100 text-blue-800`;
         div.dataset.pair = item.english;
-        div.dataset.type = item.type;
+        div.dataset.type = 'english';
         div.textContent = item.english;
         div.onclick = () => onCardClick(div);
         cardContainer.appendChild(div);
       } else {
-        // 填充空格保持布局
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'invisible';
         cardContainer.appendChild(emptyDiv);
       }
     }
-    // 中文卡片
-    for (let i = 0; i < 2; i++) {
-      let idx = row * 2 + i;
+    // 每行2中文
+    for (let col = 0; col < 2; col++) {
+      const idx = row * 2 + col;
       if (idx < zhCards.length) {
         const item = zhCards[idx];
         const div = document.createElement('div');
         div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-red-100 text-red-800`;
         div.dataset.pair = item.english;
-        div.dataset.type = item.type;
+        div.dataset.type = 'chinese';
         div.textContent = item.chinese;
         div.onclick = () => onCardClick(div);
         cardContainer.appendChild(div);
       } else {
-        // 填充空格保持布局
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'invisible';
         cardContainer.appendChild(emptyDiv);
