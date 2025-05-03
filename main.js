@@ -69,23 +69,56 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
+// 4列（2列英文，2列中文）网格布局
 function renderCards(words) {
   cardContainer.innerHTML = '';
   if (!words || words.length === 0) {
     remainingElem.textContent = '0';
     return;
   }
+  cardContainer.className = "grid grid-cols-4 gap-4 w-full"; // 设置4列
+
+  // 将英文和中文卡片分组
   let enCards = shuffle(words.map(w => ({...w, type: 'english'})));
   let zhCards = shuffle(words.map(w => ({...w, type: 'chinese'})));
-  enCards.concat(zhCards).forEach((item) => {
-    const div = document.createElement('div');
-    div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center ${item.type==='english'?'bg-blue-100 text-blue-800':'bg-red-100 text-red-800'}`;
-    div.dataset.pair = item.english;
-    div.dataset.type = item.type;
-    div.textContent = item[item.type];
-    div.onclick = () => onCardClick(div);
-    cardContainer.appendChild(div);
-  });
+
+  // 2列英文，2列中文，纵向交错排列
+  // 假定每组为N个单词（如12），则前两列为英文，后两列为中文
+  // 先拼出顺序数组：enCards[0]、enCards[1]、...、zhCards[0]、zhCards[1]、...
+  // 然后每行插入2个英文+2个中文
+
+  let rows = Math.ceil(words.length / 2); // 每行2英2中
+  for (let i = 0; i < rows; i++) {
+    // 英文卡
+    for (let j = 0; j < 2; j++) {
+      let enIndex = i * 2 + j;
+      if (enIndex < enCards.length) {
+        const item = enCards[enIndex];
+        const div = document.createElement('div');
+        div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-blue-100 text-blue-800`;
+        div.dataset.pair = item.english;
+        div.dataset.type = item.type;
+        div.textContent = item.english;
+        div.onclick = () => onCardClick(div);
+        cardContainer.appendChild(div);
+      }
+    }
+    // 中文卡
+    for (let j = 0; j < 2; j++) {
+      let zhIndex = i * 2 + j;
+      if (zhIndex < zhCards.length) {
+        const item = zhCards[zhIndex];
+        const div = document.createElement('div');
+        div.className = `card cursor-pointer rounded-lg shadow-md p-1 flex items-center justify-center bg-red-100 text-red-800`;
+        div.dataset.pair = item.english;
+        div.dataset.type = item.type;
+        div.textContent = item.chinese;
+        div.onclick = () => onCardClick(div);
+        cardContainer.appendChild(div);
+      }
+    }
+  }
+
   remainingElem.textContent = words.length;
 }
 
