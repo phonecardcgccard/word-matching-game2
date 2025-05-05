@@ -155,7 +155,10 @@ function checkMatch() {
 
 function endGame() {
   stopTimer();
+  // 播放通关音效
   successSound.play();
+
+  // 修改弹窗为英文
   messageTitle.textContent = 'Congratulations!';
   messageText.innerHTML = `Time Taken: ${formatTime(timer)}<br>Score: ${score}<br>Correct Matches: ${matched}`;
   message.classList.remove('hidden');
