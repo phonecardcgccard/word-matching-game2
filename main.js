@@ -25,6 +25,7 @@ const message = document.getElementById('message');
 const messageTitle = document.getElementById('messageTitle');
 const messageText = document.getElementById('messageText');
 const messageBtn = document.getElementById('messageBtn');
+const groupInfoElem = document.getElementById('groupInfo'); // 获取组信息元素
 
 // 音效文件路径
 const successSound = new Audio('static/success.mp3');
@@ -69,6 +70,13 @@ function startTimer() {
 
 function stopTimer() {
   clearInterval(timerInterval);
+}
+
+function updateGroupInfo() {
+  // 更新“第n小组/小组总数”内容
+  const totalGroups = wordList.length; // 总组数
+  const currentGroup = setIndex + 1;  // 当前组数（索引从0开始）
+  groupInfoElem.textContent = `第${currentGroup}小组/${totalGroups}`;
 }
 
 function renderCards(words) {
@@ -164,6 +172,7 @@ function endGame() {
 function nextSet() {
   setIndex++;
   if (setIndex >= wordList.length) setIndex = 0;
+  updateGroupInfo(); // 更新组信息
   startGame();
 }
 
@@ -176,13 +185,17 @@ async function startGame() {
   scoreElem.textContent = '0';
   timerElem.textContent = '00:00';
   message.classList.add('hidden');
+
   if (!window[`_${currentDifficulty}Words`]) {
     wordList = await loadWordList(currentDifficulty);
     window[`_${currentDifficulty}Words`] = wordList;
   } else {
     wordList = window[`_${currentDifficulty}Words`];
   }
+
   if (setIndex >= wordList.length) setIndex = 0;
+
+  updateGroupInfo(); // 更新组信息
   renderCards(wordList[setIndex] || []);
   startTimer();
 }
