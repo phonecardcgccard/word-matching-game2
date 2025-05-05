@@ -1,7 +1,7 @@
 const DIFFICULTIES = [
-  { name: 'easy', label: '简单', color: 'bg-blue-100 text-blue-800' },
-  { name: 'medium', label: '中等', color: 'bg-yellow-100 text-yellow-800' },
-  { name: 'hard', label: '困难', color: 'bg-red-100 text-red-800' }
+  { name: 'easy', label: 'Simple', color: 'bg-blue-100 text-blue-800' },
+  { name: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+  { name: 'hard', label: 'Hard', color: 'bg-red-100 text-red-800' }
 ];
 
 let currentDifficulty = 'easy';
@@ -26,6 +26,9 @@ const messageTitle = document.getElementById('messageTitle');
 const messageText = document.getElementById('messageText');
 const messageBtn = document.getElementById('messageBtn');
 
+// 音效文件路径
+const successSound = new Audio('static/success.mp3');
+
 function setActiveBtn(difficulty) {
   [easyBtn, mediumBtn, hardBtn].forEach(btn => btn.classList.remove('active'));
   if (difficulty === 'easy') easyBtn.classList.add('active');
@@ -43,7 +46,7 @@ async function loadWordList(difficulty) {
 }
 
 function formatTime(sec) {
-  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+  return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
 }
 
 function resetGame() {
@@ -68,7 +71,6 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
-// 实现每行2英文2中文，4列纵向对齐
 function renderCards(words) {
   cardContainer.innerHTML = '';
   cardContainer.className = 'grid grid-cols-4 gap-4 w-full';
@@ -78,15 +80,13 @@ function renderCards(words) {
     return;
   }
 
-  // 英文和中文卡片各自独立洗牌
-  let enCards = shuffle(words.map(w => ({...w, type: 'english'})));
-  let zhCards = shuffle(words.map(w => ({...w, type: 'chinese'})));
+  let enCards = shuffle(words.map(w => ({ ...w, type: 'english' })));
+  let zhCards = shuffle(words.map(w => ({ ...w, type: 'chinese' })));
 
   const total = words.length;
-  const rows = Math.ceil(total / 2); // 每行2英文+2中文
+  const rows = Math.ceil(total / 2);
 
   for (let row = 0; row < rows; row++) {
-    // 每行2英文
     for (let col = 0; col < 2; col++) {
       const idx = row * 2 + col;
       if (idx < enCards.length) {
@@ -104,7 +104,7 @@ function renderCards(words) {
         cardContainer.appendChild(emptyDiv);
       }
     }
-    // 每行2中文
+
     for (let col = 0; col < 2; col++) {
       const idx = row * 2 + col;
       if (idx < zhCards.length) {
@@ -155,8 +155,12 @@ function checkMatch() {
 
 function endGame() {
   stopTimer();
-  messageTitle.textContent = '恭喜通关！';
-  messageText.innerHTML = `用时：${formatTime(timer)}<br>得分：${score}<br>正确配对：${matched}`;
+  // 播放通关音效
+  successSound.play();
+
+  // 修改弹窗为英文
+  messageTitle.textContent = 'Congratulations!';
+  messageText.innerHTML = `Time Taken: ${formatTime(timer)}<br>Score: ${score}<br>Correct Matches: ${matched}`;
   message.classList.remove('hidden');
 }
 
