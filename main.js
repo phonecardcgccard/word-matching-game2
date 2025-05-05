@@ -128,30 +128,30 @@ function renderCards(words) {
 
 function onCardClick(card) {
   if (selected.length === 2 || card.classList.contains('matched') || card.classList.contains('selected')) return;
-  card.classList.add('selected');card   卡.classList   班级名册.add   添加(“选择”);
-  selected.push(card);   selected   选择.push   推(卡);
-  if (selected.length === 2) checkMatch();if   如果(选编》。length === 2) checkMatch()；
-}   好
+  card.classList.add('selected');
+  selected.push(card);
+  if (selected.length === 2) checkMatch();
+}
 
-function checkMatch() {   函数checkMatch() {
-  const [a, b] = selected;   Const   常量 [a   一个, b] = select；
-  if (a.dataset.pair === b.dataset.pair && a.dataset.type !== b.dataset.type) {如果(a   一个.dataset。Pair === b.dataset   数据集.pair   一对 && a   一个.dataset   数据集.type   类型 !== b.dataset   数据集.type   类型) {
-    a.classList.add('matched');a   一个.classList   班级名册.add   添加(“匹配”);
-    b.classList.add('matched');b.classList   班级名册.add   添加(“匹配”);
-    matched++;   匹配;
-    score += 10;   得分= 10；
-    scoreElem.textContent = score;scoreElem。textContent = score；
+function checkMatch() {
+  const [a, b] = selected;
+  if (a.dataset.pair === b.dataset.pair && a.dataset.type !== b.dataset.type) {
+    a.classList.add('matched');
+    b.classList.add('matched');
+    matched++;
+    score += 10;
+    scoreElem.textContent = score;
     if (matched === (wordList[setIndex] ? wordList[setIndex].length : 0)) endGame();
   } else {
-    setTimeout(() => {   7月()=> (
-      a.classList.remove('selected');a   一个.classList   班级名册.remove   删除(“选择”);
+    setTimeout(() => {
+      a.classList.remove('selected');
       b.classList.remove('selected');
     }, 500);
     if (score > 0) score -= 2;
-    scoreElem.textContent = score;scoreElem。textContent = score；
+    scoreElem.textContent = score;
   }
-  selected = [];   Selected = []；
-}   好
+  selected = [];
+}
 
 function endGame() {
   stopTimer();
@@ -159,40 +159,40 @@ function endGame() {
   messageTitle.textContent = 'Congratulations!';
   messageText.innerHTML = `Time Taken: ${formatTime(timer)}<br>Score: ${score}<br>Correct Matches: ${matched}`;
   message.classList.remove('hidden');
-}   好
+}
 
 function nextSet() {
   setIndex++;
   if (setIndex >= wordList.length) setIndex = 0;
   startGame();
-}   好
+}
 
-async function startGame() {异步函数startGame() {
+async function startGame() {
   stopTimer();
-  matched = 0;   Matched = 0；
-  selected = [];   Selected = []；
-  score = 0;   得分= 0；
-  timer = 0;   定时器= 0；
+  matched = 0;
+  selected = [];
+  score = 0;
+  timer = 0;
   scoreElem.textContent = '0';
   timerElem.textContent = '00:00';
-  message.classList.add('hidden');message   消息.classList   班级名册.add   添加(隐含);
-  if (!window[`_${currentDifficulty}Words`]) {if   如果 (!window   窗口[' _${currentDifficulty}Words ']) {
-    wordList = await loadWordList(currentDifficulty);wordList = await   等待 loadWordList(currentDifficulty)；
-    window[`_${currentDifficulty}Words`] = wordList;window   窗口[' _${currentDifficulty}Words '] = wordList；
+  message.classList.add('hidden');
+  if (!window[`_${currentDifficulty}Words`]) {
+    wordList = await loadWordList(currentDifficulty);
+    window[`_${currentDifficulty}Words`] = wordList;
   } else {
-    wordList = window[`_${currentDifficulty}Words`];wordList = window   窗口[' _${currentDifficulty}Words ']；
+    wordList = window[`_${currentDifficulty}Words`];
   }
   if (setIndex >= wordList.length) setIndex = 0;
-  renderCards(wordList[setIndex] || []);renderCards(wordList[setIndex] || [])；
+  renderCards(wordList[setIndex] || []);
   startTimer();
-}   好
+}
 
-easyBtn.onclick = () => { currentDifficulty = 'easy'; setActiveBtn('easy'); setIndex = 0; startGame(); }easyBtn。onclick = () => {currentDifficulty = 'easy'；setActiveBtn('简单');setIndex = 0；startGame ();}   好
-mediumBtn.onclick = () => { currentDifficulty = 'medium'; setActiveBtn('medium'); setIndex = 0; startGame(); }mediumBtn。onclick = () => {currentDifficulty = 'medium'；setActiveBtn(介质);setIndex = 0；startGame ();}   好
-hardBtn.onclick = () => { currentDifficulty = 'hard'; setActiveBtn('hard'); setIndex = 0; startGame(); }hardBtn。onclick = () => {currentDifficulty = 'hard'；setActiveBtn(“硬”);setIndex = 0；startGame ();}   好
+easyBtn.onclick = () => { currentDifficulty = 'easy'; setActiveBtn('easy'); setIndex = 0; startGame(); }
+mediumBtn.onclick = () => { currentDifficulty = 'medium'; setActiveBtn('medium'); setIndex = 0; startGame(); }
+hardBtn.onclick = () => { currentDifficulty = 'hard'; setActiveBtn('hard'); setIndex = 0; startGame(); }
 nextSetBtn.onclick = nextSet;
-messageBtn.onclick = () => { message.classList.add('hidden'); nextSet(); };messageBtn .onclick = () => {message   消息.classList   班级名册.add   添加('hidden'   “隐藏”)；nextSet ();新程序;
+messageBtn.onclick = () => { message.classList.add('hidden'); nextSet(); };
 
 // 初始化
-setActiveBtn('easy');   setActiveBtn('简单');
+setActiveBtn('easy');
 startGame();
