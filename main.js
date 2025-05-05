@@ -27,7 +27,7 @@ const messageText = document.getElementById('messageText');
 const messageBtn = document.getElementById('messageBtn');
 
 // 音效文件路径
-const successSound = new Audio('static/success.mp3');
+const successSound = new Audio('static/success.wav');
 
 function setActiveBtn(difficulty) {
   [easyBtn, mediumBtn, hardBtn].forEach(btn => btn.classList.remove('active'));
